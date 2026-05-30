@@ -1,14 +1,14 @@
 from yandex_ai.prompt_builder import build_final_evaluation_prompt
 from yandex_ai.yandex_gpt_client import yandex_gpt_client
-from game.case_models import Solution
+from game.case_models import Solution, CaseData
 from database.db import AsyncSessionLocal
 from database.models import Investigation
 from core.states import UserState
 from vk_bot.vk_sender import vk_sender
 
 class FinalEvaluator:
-    async def evaluate_version(self, user_id: int, investigation_id: int, solution: Solution, user_version: str):
-        system_prompt = build_final_evaluation_prompt(solution, user_version)
+    async def evaluate_version(self, user_id: int, investigation_id: int, case: CaseData, user_version: str):
+        system_prompt = build_final_evaluation_prompt(case, user_version)
         response = await yandex_gpt_client.generate_response(system_prompt, user_version)
         
         async with AsyncSessionLocal() as session:

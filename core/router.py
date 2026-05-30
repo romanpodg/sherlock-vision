@@ -29,28 +29,28 @@ async def route_message(user_id: int, text: str, payload_str: str = None):
             await scenario_engine.handle(user_id, text, payload, active_inv, inv_repo)
             return
 
-        if text.lower() in ["/start", "старт"] or current_state == UserState.START.value:
+        if command == "start_new_case" or text.lower() == "начать новое дело":
+            case_id = "case_001_gallery_ring"
+            active_inv = await inv_repo.create_investigation(user.id, case_id)
+            await scenario_engine.handle(user_id, text, payload, active_inv, inv_repo)
+            
+        elif command == "continue_case" or text.lower() == "продолжить расследование":
+            if active_inv:
+                await scenario_engine.handle(user_id, text, payload, active_inv, inv_repo)
+            else:
+                await vk_sender.send_message(user_id, "У вас нет активных дел.", keyboard=get_main_menu())
+                
+        elif command == "help" or text.lower() == "справка":
+            help_text = "Справка по боту:\nДля навигации используйте кнопки меню."
+            await vk_sender.send_message(user_id, help_text, keyboard=get_main_menu())
+
+        elif text.lower() in ["/start", "старт"] or current_state == UserState.START.value:
             welcome_text = (
                 "Добро пожаловать в Sherlock Vision. Вы — детектив, которому поручено расследование. "
                 "Я помогу вам собрать показания, восстановить внешность подозреваемого, "
                 "визуализировать улики и подготовить итоговую версию произошедшего."
             )
             await vk_sender.send_message(user_id, welcome_text, keyboard=get_main_menu())
-                
-        elif command == "start_new_case" or (not active_inv and text.lower() == "начать новое дело"):
-            case_id = "case_001_gallery_ring"
-            active_inv = await inv_repo.create_investigation(user.id, case_id)
-            await scenario_engine.handle(user_id, text, payload, active_inv, inv_repo)
-            
-        elif command == "continue_case":
-            if active_inv:
-                await scenario_engine.handle(user_id, text, payload, active_inv, inv_repo)
-            else:
-                await vk_sender.send_message(user_id, "У вас нет активных дел.", keyboard=get_main_menu())
-                
-        elif command == "help":
-            help_text = "Справка по боту:\nДля навигации используйте кнопки меню."
-            await vk_sender.send_message(user_id, help_text, keyboard=get_main_menu())
             
         else:
             await vk_sender.send_message(user_id, f"Главное меню. Вы написали: {text}", keyboard=get_main_menu())

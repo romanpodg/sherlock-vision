@@ -140,7 +140,7 @@ class ScenarioEngine:
         elif state == UserState.FINAL_VERSION.value:
             from game.final_evaluator import final_evaluator
             await vk_sender.send_message(user_id, "Ваша версия отправлена на оценку руководству. Ожидайте...")
-            await final_evaluator.evaluate_version(user_id, inv.id, case.solution, text)
+            await final_evaluator.evaluate_version(user_id, inv.id, case, text)
 
         else:
             await vk_sender.send_message(user_id, f"Вы находитесь в состоянии {state}. Логика для него пока в разработке.", keyboard=get_investigation_menu())
