@@ -9,9 +9,15 @@ class PortraitEngine:
     async def request_portrait(self, user_id: int, investigation_id: int, suspect: Suspect):
         prompt = build_yandex_art_portrait_prompt(suspect)
         
-        # 1. Запрос в YandexART
-        operation_id = await yandex_art_client.request_generation(prompt)
+        await vk_sender.send_message(user_id, "Отправил запрос криминалистам на составление портрета. Ожидайте...")
         
+        # 1. Запрос в YandexART
+        try:
+            operation_id = await yandex_art_client.request_generation(prompt)
+        except TimeoutError as e:
+            await vk_sender.send_message(user_id, str(e))
+            return
+            
         if not operation_id:
             await vk_sender.send_message(user_id, "Ошибка при обращении к художнику (ИИ). Попробуйте позже.")
             return

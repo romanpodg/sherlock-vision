@@ -20,7 +20,7 @@ class YandexARTClient:
         }
 
     async def request_generation(self, prompt: str) -> str | None:
-        """Starts async generation and returns operation ID."""
+        """Starts async generation and returns operation ID. Raises TimeoutError on timeout."""
         data = {
             "modelUri": self.model_uri,
             "generationOptions": {
@@ -33,13 +33,17 @@ class YandexARTClient:
         async with aiohttp.ClientSession() as session:
             try:
                 headers = await self._get_headers()
-                async with session.post(self.base_url, headers=headers, json=data) as resp:
+                timeout = aiohttp.ClientTimeout(total=15)
+                async with session.post(self.base_url, headers=headers, json=data, timeout=timeout) as resp:
                     if resp.status == 200:
                         result = await resp.json()
                         return result.get("id")
                     else:
                         logger.error(f"YandexART Request Error: {resp.status} - {await resp.text()}")
                         return None
+            except asyncio.TimeoutError:
+                logger.error("YandexART request timed out")
+                raise TimeoutError("Сервисное сообщение: Сервер Яндекса сейчас перегружен, попробуйте отправить запрос через минуту")
             except Exception as e:
                 logger.error(f"YandexART API call failed: {e}")
                 return None

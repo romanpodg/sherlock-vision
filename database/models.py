@@ -80,3 +80,13 @@ class MessageLog(Base):
     role = Column(String, nullable=False) # 'user', 'bot'
     message_text = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class CaseModel(Base):
+    __tablename__ = "cases"
+
+    id = Column(String, primary_key=True)
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    is_generated = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    data = Column(JSON, nullable=False)

@@ -3,6 +3,8 @@ from enum import Enum
 class UserState(str, Enum):
     START = "start"
     MAIN_MENU = "main_menu"
+    SELECT_SETTING = "select_setting"
+    SELECT_DIFFICULTY = "select_difficulty"
     CASE_INTRO = "case_intro"
     INVESTIGATION_MENU = "investigation_menu"
     LOCATION_INSPECTION = "location_inspection"

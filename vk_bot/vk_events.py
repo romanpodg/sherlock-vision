@@ -47,9 +47,14 @@ class VkLongPoll:
         if update["type"] == "message_new":
             message = update["object"]["message"]
             user_id = message["from_id"]
-            text = message["text"]
+            text = message.get("text", "")
             payload = message.get("payload")
             
+            if not text and not payload:
+                from vk_bot.vk_sender import vk_sender
+                await vk_sender.send_message(user_id, "Детектив, я понимаю только текстовые сообщения и команды с кнопок")
+                return
+
             logger.info(f"New message from {user_id}: {text} (Payload: {payload})")
             
             # Use local import to avoid circular dependency early
