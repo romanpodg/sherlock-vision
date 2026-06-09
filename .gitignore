@@ -152,5 +152,5 @@ Thumbs.db
 !/media/generated/.gitkeep
 
 # MD files
-scenario_generation.md
-summary.md
+scene-generate.md
+steps.md
