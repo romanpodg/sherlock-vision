@@ -150,3 +150,7 @@ Thumbs.db
 # Generated Game Assets
 /media/generated/*
 !/media/generated/.gitkeep
+
+# MD files
+scenario_generation.md
+summary.md
